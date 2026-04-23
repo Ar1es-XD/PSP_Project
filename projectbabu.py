@@ -1,7 +1,7 @@
 import random
 y = input()
 wanted = list(y)
-alp="abcdefghijklmnopqrstuvwxyz"
+alp="abcdefghijklmnopqrstuvwxyz1234567890 _+=~₹!@#$%^&*(){}[]|;:<>,.?/"
 cur = [random.choice(alp) for u in range(len(wanted))]
 tries = 0
 def get_ran_ch():
