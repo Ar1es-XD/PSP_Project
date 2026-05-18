@@ -28,3 +28,19 @@ async def ready(request: Request) -> dict:
 @router.get("/metrics")
 def metrics():
     return metrics_response()
+
+
+@router.get("/health/distributed")
+async def distributed_health(request: Request) -> dict:
+    engine = request.app.state.db_engine
+    settings = request.app.state.settings
+    async with engine.connect() as connection:
+        await connection.execute(text("SELECT 1"))
+    redis_client = redis.from_url(settings.redis_url)
+    await redis_client.ping()
+    heartbeat = await redis_client.get(settings.worker_heartbeat_key)
+    await redis_client.close()
+    return {
+        "status": "ok",
+        "worker_heartbeat": bool(heartbeat),
+    }

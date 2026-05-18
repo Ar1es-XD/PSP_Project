@@ -92,3 +92,11 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         duration = time.perf_counter() - start
         record_request(request.method, request.url.path, response.status_code, duration)
         return response
+
+
+class ResilienceMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        response = await call_next(request)
+        if response.status_code in {429, 503}:
+            response.headers.setdefault("Retry-After", "5")
+        return response

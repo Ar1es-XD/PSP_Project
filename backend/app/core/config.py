@@ -32,8 +32,22 @@ class Settings(BaseSettings):
     alembic_ini_path: str = "backend/alembic.ini"
     worker_heartbeat_interval: int = Field(default=10, ge=5, le=300)
     worker_heartbeat_channel: str = "workers:heartbeat"
+    worker_heartbeat_key: str = "workers:heartbeat:last"
+    worker_heartbeat_ttl: int = Field(default=30, ge=10, le=600)
     worker_metrics_pushgateway: str = ""
     worker_metrics_job: str = "password-evolver-worker"
+    celery_task_soft_time_limit: int = Field(default=20, ge=5, le=600)
+    celery_task_time_limit: int = Field(default=30, ge=10, le=900)
+    celery_task_max_retries: int = Field(default=3, ge=0, le=10)
+    celery_retry_backoff_base: float = Field(default=0.2, ge=0.05, le=5.0)
+    celery_retry_backoff_cap: float = Field(default=5.0, ge=0.5, le=60.0)
+    celery_queue_backlog_limit: int = Field(default=10000, ge=0, le=1000000)
+    celery_queue_key: str = "simulations"
+    dlq_redis_key: str = "dlq:simulations"
+    redis_circuit_failures: int = Field(default=5, ge=1, le=50)
+    redis_circuit_recovery_seconds: int = Field(default=10, ge=1, le=300)
+    worker_max_tasks_per_child: int = Field(default=1000, ge=0, le=100000)
+    worker_max_memory_per_child_mb: int = Field(default=512, ge=0, le=8192)
 
     model_config = SettingsConfigDict(env_prefix="EVOLVER_")
 
